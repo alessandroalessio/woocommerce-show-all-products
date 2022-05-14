@@ -1,4 +1,4 @@
-# Woocommerce Show All Products
+# AA Woo Show All Products
 Plugin that enable shortcode to show all products
 
 ## Usage

@@ -1,4 +1,4 @@
-=== WooCommerce - eDock Exporter ===
+=== AA Woo Show All Products ===
 Contributors: alessandroalessio
 Tags: woocommerce
 Requires at least: 5.9

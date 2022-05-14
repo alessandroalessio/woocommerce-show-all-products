@@ -1,21 +1,21 @@
 <?php
 /*
-Plugin Name: Woocommerce Show All Products
+Plugin Name: AA Woo Show All Products
 Plugin URI: https://www.a2area.it/woocommerce-show-all-products/
 Description: Use a shortcode to display all Woocommerce products as a list
 Version: 1.0
 Author: Alessandro Alessio
 Author URI: https://www.a2area.it
 License: GPLv2 or later
-Text Domain: woocommerce-show-all-products
+Text Domain: aa-woo-show-all-products
 */
 
-function woo_show_all_products_check_woo_is_active(){
+function woocommerce_show_all_products_check_woocommerce_is_active(){
     echo '<div class="notice notice-warning is-dismissible">
-        <p>'.__('Woocommerce not active: For right functions of Woocommerce Show All Products you need to activate Woocommerce', 'woocommerce-show-all-products').'</p>
+        <p>'.__('Woocommerce not active: For right functions of Woocommerce Show All Products you need to activate Woocommerce', 'aa-woo-show-all-products').'</p>
     </div>';
 }
-if ( ! class_exists( 'WooCommerce', false ) ) { add_action('admin_notices', 'woo_show_all_products_check_woo_is_active'); }
+if ( ! class_exists( 'WooCommerce', false ) ) { add_action('admin_notices', 'woocommerce_show_all_products_check_woocommerce_is_active'); }
 
 
 
@@ -43,18 +43,19 @@ if ( !function_exists('woocommerce_show_all_products') ) {
         );
         $query = new WP_Query( $args );
 
-        if ( $query->have_posts() ) { ?>
-            <table class="table">
+        $html = '';
+        if ( $query->have_posts() ) { 
+            $html .= '<table class="table">
                 <thead>
                     <tr>
-                        <th><?php _e('ID', 'woocommerce-show-all-products') ?></th>
-                        <th><?php _e('Product Name', 'woocommerce-show-all-products') ?></th>
-                        <th><?php _e('Q.ty', 'woocommerce-show-all-products') ?></th>
-                        <th><?php _e('Price', 'woocommerce-show-all-products') ?></th>
+                        <th>'.__('ID', 'aa-woo-show-all-products').'</th>
+                        <th>'.__('Product Name', 'aa-woo-show-all-products').'</th>
+                        <th>'.__('Q.ty', 'aa-woo-show-all-products').'</th>
+                        <th>'.__('Price', 'aa-woo-show-all-products').'</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php
+                <tbody>';
+                
                     while ( $query->have_posts() ) {
                         $query->the_post();
                         $ID = get_the_ID();
@@ -63,48 +64,40 @@ if ( !function_exists('woocommerce_show_all_products') ) {
                         if ( count($children)>0 ) {
                             foreach ($children as $key => $ID_children) {
                                 $children = wc_get_product( $ID_children );
-                                ?>
-                                <tr>
-                                    <td><?=$ID_children ?></td>
-                                    <td><?=$children->get_name() ?></td>
-                                    <td>
-                                        <?php 
+                                $html .= '<tr>
+                                    <td>'.$ID_children.'</td>
+                                    <td>'.$children->get_name().'</td>
+                                    <td>'; 
                                         $stock_quantity = $children->get_stock_quantity();
-                                        echo ( is_int($stock_quantity) || $stock_quantity!=null ) ? $stock_quantity : '0' ;
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
+                                        $html .= ( is_int($stock_quantity) || $stock_quantity!=null ) ? $stock_quantity : '0' ;
+                                    $html .= '</td>
+                                    <td>';
                                         $price = $children->get_price();
-                                        echo ( is_numeric($price) ) ? $price.' '.get_woocommerce_currency_symbol() : '0 '.get_woocommerce_currency_symbol();
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php }
-                        } else { ?>
-                            <tr>
-                                <td><?=$ID ?></td>
-                                <td><?=$product->get_name() ?></td>
-                                <td>
-                                    <?php 
+                                        $html .= ( is_numeric($price) ) ? $price.' '.get_woocommerce_currency_symbol() : '0 '.get_woocommerce_currency_symbol();
+                                    $html .= '</td>
+                                </tr>';
+                            }
+                        } else {
+                            $html .= '<tr>
+                                <td>'.$ID.'</td>
+                                <td>'.$product->get_name().'</td>
+                                <td>';
                                     $stock_quantity = $product->get_stock_quantity();
-                                    echo ( is_int($stock_quantity) || $stock_quantity!=null ) ? $stock_quantity : '0' ;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
+                                    $html .= ( is_int($stock_quantity) || $stock_quantity!=null ) ? $stock_quantity : '0' ;
+                                $html .= '</td>
+                                <td>';
                                     $price = $product->get_price();
-                                    echo ( is_numeric($price) ) ? $price.' '.get_woocommerce_currency_symbol() : '0 '.get_woocommerce_currency_symbol();
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    <?php } ?>
-                </tbody>
-            </table>
-            <?php
+                                    $html .= ( is_numeric($price) ) ? $price.' '.get_woocommerce_currency_symbol() : '0 '.get_woocommerce_currency_symbol();
+                                $html .= '</td>
+                            </tr>';
+                        }
+                    }
+                $html .= '</tbody>
+            </table>';
         }
         wp_reset_postdata();
+        
+        return $html;
     }
 }
 
