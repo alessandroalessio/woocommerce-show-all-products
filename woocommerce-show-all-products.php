@@ -15,9 +15,11 @@ function woocommerce_show_all_products_check_woocommerce_is_active(){
         <p>'.__('Woocommerce not active: For right functions of Woocommerce Show All Products you need to activate Woocommerce', 'aa-woo-show-all-products').'</p>
     </div>';
 }
-if ( ! class_exists( 'WooCommerce', false ) ) { add_action('admin_notices', 'woocommerce_show_all_products_check_woocommerce_is_active'); }
 
-
+add_action( 'init', 'woo_show_all_products_init_check' );
+function woo_show_all_products_init_check(){
+    if ( ! class_exists( 'WooCommerce', false ) ) { add_action('admin_notices', 'woocommerce_show_all_products_check_woocommerce_is_active'); }
+}
 
 add_shortcode("woo_show_all_products", "woocommerce_show_all_products");
 
